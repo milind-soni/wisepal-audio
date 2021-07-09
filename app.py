@@ -14,8 +14,9 @@ prediction = None
 score = None 
 
 fileObject = st.file_uploader(label = "Please upload your sample audio file of the interviewee" )
+text_io = io.TextIOWrapper(fileObject)
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
-
+text_io2 = io.TextIOWrapper(fileObject2)
 if fileObject is not None:
     file_details = {"FileName":fileObject.name,"FileType":fileObject.type,"FileSize":fileObject.size}
     st.write(file_details)

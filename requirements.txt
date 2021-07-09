@@ -1,5 +1,7 @@
 streamlit==0.61.0
 pandas==0.25.3
 numpy==1.18.1
-scikit-learn==0.22.1
 speechbrain
+torch==1.8.1+cpu 
+torchvision==0.9.1+cpu
+-f https://download.pytorch.org/whl/torch_stable.html

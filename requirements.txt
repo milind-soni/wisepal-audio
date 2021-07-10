@@ -1,5 +1,6 @@
 pandas==0.25.3
 google-cloud-storage
+jwt
 pyrebase
 numpy==1.18.1
 speechbrain

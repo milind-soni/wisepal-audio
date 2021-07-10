@@ -7,7 +7,7 @@ from speechbrain.pretrained import SpeakerRecognition
 import os
 import wave
 from google.cloud import storage
-
+from speechbrain.pretrained import EncoderDecoderASR
 
 
 import pyrebase
@@ -107,6 +107,9 @@ def get_blob_path(blob):
 if st.button('result'):
     verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
     score, prediction = verification.verify_files(get_blob_path(fileObject),get_blob_path(fileObject2))
+    
+    asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+    transcription = asr_model.transcribe_file(get_blob_path(fileObject2))
     st.write(prediction)
     st.write(score)
   

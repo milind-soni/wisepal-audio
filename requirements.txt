@@ -1,5 +1,6 @@
 pandas==0.25.3
 google-cloud-storage
+pyrebase
 numpy==1.18.1
 speechbrain
 torch==1.8.1+cpu 

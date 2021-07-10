@@ -6,6 +6,38 @@ import time
 from speechbrain.pretrained import SpeakerRecognition
 import os
 import wave
+from google.cloud import storage
+
+
+
+import pyrebase
+import os
+
+#-------------------------------------------------------------------------------
+# Variables & Setup
+
+filelist = [ f for f in os.listdir(".") if f.endswith(".JPG") ]
+for f in filelist:
+    os.remove(os.path.join(".", f))
+
+config = {
+"apiKey": "AIzaSyDFyW8s4L8pabax_r9QajAkfxaJBLB00AE",
+"authDomain": "fileupload-962b1.firebaseapp.com",
+"databaseURL": "https://fileupload-962b1.firebaseio.com",
+"projectId": "fileupload-962b1",
+"storageBucket": "fileupload-962b1.appspot.com",
+"serviceAccount": "fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
+}
+
+firebase_storage = pyrebase.initialize_app(config)
+storage = firebase_storage.storage()
+
+#-------------------------------------------------------------------------------
+# Uploading And Downloading Images
+
+# storage.child("Guitar.JPG").put("Guitar.JPG")
+# storage.child("PlayingGuitar.JPG").download("PlayingGuitar.JPG")
+
 
 st.header("Audio Verification app")
 st.set_option('deprecation.showfileUploaderEncoding', False)
@@ -24,27 +56,57 @@ fileObject = st.file_uploader(label = "Please upload your sample audio file of t
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
 
-bucket_name= 'bucket_name'
-blob_name = 'blob name'
-path_to_file = 'file'	
-
-
-
 if fileObject is not None:
     file_details = {"FileName":fileObject.name,"FileType":fileObject.type,"FileSize":fileObject.size}
     st.write(file_details)
     st.write(fileObject)
-    #st.audio(fileObject, format='audio/ogg')
-    load_audio(fileObject.name)
+    st.audio(fileObject, format='audio/ogg')
+
+    storage.child(fileObject.name).put(fileObject.name)
+    
+    
 if fileObject2 is not None:
     file_details = {"FileName":fileObject2.name,"FileType":fileObject2.type,"FileSize":fileObject2.size}
     st.write(file_details)
     st.write(fileObject2)
-    #st.audio(fileObject2, format='audio/ogg')
-    load_audio(fileObject.name)
+    st.audio(fileObject2, format='audio/ogg')
+
+    storage.child(fileObject2.name).put(fileObject2.name)
+
+
+from google.cloud import storage
+bucket_name = "fileupload-962b1.appspot.com"
+
+
+import os
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
+def list_blobs(bucket_name):
+    """Lists all the blobs in the bucket."""
+    
+
+    storage_client = storage.Client()
+
+    # Note: Client.list_blobs requires at least package version 1.17.0.
+    blobs = storage_client.list_blobs(bucket_name)
+
+    for blob in blobs:
+        print(blob.name)
+
+
+list_blobs(bucket_name)
+
+def get_blob_path(blob):
+        """
+        Gets blob path.
+        :param blob: instance of :class:`google.cloud.storage.Blob`.
+        :return: path string.
+        """
+        return bucket_name + "/" + blob.name 
+
+
 if st.button('result'):
     verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-    score, prediction = verification.verify_files(fileObject.name, fileObject2.name)
+    score, prediction = verification.verify_files(get_blob_path(fileObject),get_blob_path(fileObject2))
     st.write(prediction)
     st.write(score)
   

@@ -24,19 +24,24 @@ fileObject = st.file_uploader(label = "Please upload your sample audio file of t
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
 
+bucket_name= 'bucket_name'
+blob_name = 'blob name'
+path_to_file = 'file'	
+
+
 
 if fileObject is not None:
     file_details = {"FileName":fileObject.name,"FileType":fileObject.type,"FileSize":fileObject.size}
     st.write(file_details)
     st.write(fileObject)
-    st.audio(fileObject, format='audio/ogg')
-    
+    #st.audio(fileObject, format='audio/ogg')
+    load_audio(fileObject.name)
 if fileObject2 is not None:
     file_details = {"FileName":fileObject2.name,"FileType":fileObject2.type,"FileSize":fileObject2.size}
     st.write(file_details)
     st.write(fileObject2)
-    st.audio(fileObject2, format='audio/ogg')
-        
+    #st.audio(fileObject2, format='audio/ogg')
+    load_audio(fileObject.name)
 if st.button('result'):
     verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
     score, prediction = verification.verify_files(fileObject.name, fileObject2.name)

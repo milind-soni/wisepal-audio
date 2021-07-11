@@ -109,10 +109,10 @@ if fileObject and fileObject2 is not None:
         
     if st.button('result'):
         verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-        score, prediction = verification.verify_files(fileObject,fileObject2)
+        score, prediction = verification.verify_files(fileObject.name,fileObject2.name)
         
         asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
-        transcription = asr_model.transcribe_file(fileObject2)
+        transcription = asr_model.transcribe_file(fileObject2.name)
         st.write(prediction)
         st.write(score)
     

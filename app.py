@@ -84,22 +84,18 @@ fileObject2 = st.file_uploader(label = "Please upload your sample audio file of 
 
 
 
-
 if fileObject and fileObject2 is not None:
-    file_details = {"FileName":fileObject.name,"FileType":fileObject.type,"FileSize":fileObject.size}
-    st.write(file_details)
-    st.write(fileObject)
-    st.audio(fileObject, format='audio/ogg')
-    st.audio(fileObject2, format='audio/ogg')
+    verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+    score, prediction = verification.verify_files(fileObject.name,fileObject2.name)
+    st.write(prediction)
+    st.write(score)
     
 #     storage.child(fileObject.name).put(fileObject.name)
 #     storage.child(fileObject2.name).put(fileObject2.name)
 
-    verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-    score, prediction = verification.verify_files(fileObject.name,fileObject2.name)
+    
         
 #     asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
 #     transcription = asr_model.transcribe_file(get_blob_path(fileObject2))
-    st.write(prediction)
-    st.write(score)
+    
     

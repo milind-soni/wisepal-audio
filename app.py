@@ -56,23 +56,6 @@ fileObject = st.file_uploader(label = "Please upload your sample audio file of t
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
 
-if fileObject is not None:
-    file_details = {"FileName":fileObject.name,"FileType":fileObject.type,"FileSize":fileObject.size}
-    st.write(file_details)
-    st.write(fileObject)
-    st.audio(fileObject, format='audio/ogg')
-
-    storage.child(fileObject.name).put(fileObject.name)
-    
-    
-if fileObject2 is not None:
-    file_details = {"FileName":fileObject2.name,"FileType":fileObject2.type,"FileSize":fileObject2.size}
-    st.write(file_details)
-    st.write(fileObject2)
-    st.audio(fileObject2, format='audio/ogg')
-
-    storage.child(fileObject2.name).put(fileObject2.name)
-
 
 from google.cloud import storage
 bucket_name = "fileupload-962b1.appspot.com"
@@ -103,15 +86,25 @@ def get_blob_path(blob):
         """
         return bucket_name + "/" + blob.name 
 
+if fileObject and fileObject2 is not None:
+    file_details = {"FileName":fileObject.name,"FileType":fileObject.type,"FileSize":fileObject.size}
+    st.write(file_details)
+    st.write(fileObject)
+    st.audio(fileObject, format='audio/ogg')
+    st.audio(fileObject2, format='audio/ogg')
 
-if st.button('result'):
-    verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-    score, prediction = verification.verify_files(get_blob_path(fileObject),get_blob_path(fileObject2))
-    
-    asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
-    transcription = asr_model.transcribe_file(get_blob_path(fileObject2))
-    st.write(prediction)
-    st.write(score)
-  
+    storage.child(fileObject.name).put(fileObject.name)
+    storage.child(fileObject2.name).put(fileObject2.name)
+        
+    if st.button('result'):
+        verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+        score, prediction = verification.verify_files(get_blob_path(fileObject),get_blob_path(fileObject2))
+        
+        asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+        transcription = asr_model.transcribe_file(get_blob_path(fileObject2))
+        st.write(prediction)
+        st.write(score)
+
+
  
     

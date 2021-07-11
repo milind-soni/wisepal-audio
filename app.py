@@ -9,6 +9,7 @@ import wave
 from google.cloud import storage
 from speechbrain.pretrained import EncoderDecoderASR
 from google.cloud import storage
+from google.cloud import pubsub_v1
 
 import pyrebase
 import os
@@ -31,21 +32,22 @@ storage = firebase_storage.storage()
 
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
-def list_blobs(bucket_name):
-    """Lists all the blobs in the bucket."""
+# '''
+# def list_blobs(bucket_name):
+#     """Lists all the blobs in the bucket."""
     
 
-    storage_client = storage.Client()
+#     storage_client = storage.Client()
+    
+#     # Note: Client.list_blobs requires at least package version 1.17.0.
+#     blobs = storage_client.list_blobs(bucket_name)
 
-    # Note: Client.list_blobs requires at least package version 1.17.0.
-    blobs = storage_client.list_blobs(bucket_name)
-
-    for blob in blobs:
-        print(bucket_name+'/' + blob.name)
+#     for blob in blobs:
+#         print(bucket_name+'/' + blob.name)
 
 
-list_blobs(bucket_name)
-
+# list_blobs(bucket_name)
+# '''
 
 def get_blob_path(blob):
         """
@@ -79,10 +81,6 @@ fileObject = st.file_uploader(label = "Please upload your sample audio file of t
 
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
-storage.child(fileObject.name).put(fileObject.name)
-storage.child(fileObject2.name).put(fileObject2.name)
-
-
 
 
 
@@ -93,6 +91,10 @@ if fileObject and fileObject2 is not None:
     st.write(fileObject)
     st.audio(fileObject, format='audio/ogg')
     st.audio(fileObject2, format='audio/ogg')
+    
+    storage.child(fileObject.name).put(fileObject.name)
+    storage.child(fileObject2.name).put(fileObject2.name)
+
 
     
         
@@ -104,11 +106,4 @@ if fileObject and fileObject2 is not None:
         transcription = asr_model.transcribe_file(get_blob_path(fileObject2))
         st.write(prediction)
         st.write(score)
-    
-
-
-
-
-
-
     

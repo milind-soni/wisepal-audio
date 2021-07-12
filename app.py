@@ -58,11 +58,13 @@ import os
 #         """
 #         return bucket_name + "/" + blob.name 
 
+path = os.path.dirname(__file__)
 
 def save_uploadedfile(uploaded_file):
      file_var = AudioSegment.from_mp3(uploaded_file) 
+    
 
-     file_var.export("uploads/" + uploaded_file)
+     file_var.export(path+ "/uploads/" + uploaded_file)
 
 
 
@@ -74,12 +76,6 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 
 
 
-
-@st.cache
-def load_audio(audio_file):
-    audio_file = open(audio_file, 'rb')
-    audio_bytes = audio_file.read()
-    return audio_file
 
 prediction = None 
 score = None 
@@ -95,13 +91,11 @@ if fileObject and fileObject2 is not None:
     file2_details = {"FileName":fileObject2.name,"FileType":fileObject2.type}
 
     
-    if st.button('save'):
+    if st.button('result'):
         save_uploadedfile(fileObject.name)
         save_uploadedfile(fileObject2.name)
-    
-    if st.button('result'):
         verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-        score, prediction = verification.verify_files("uploads/" + fileObject.name,"uploads/" + fileObject2.name)
+        score, prediction = verification.verify_files(path+ "/uploads/" + fileObject.name,path+ "/uploads/" + fileObject2.name)
         st.write(prediction)
         st.write(score)
             

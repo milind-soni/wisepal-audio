@@ -46,10 +46,10 @@ def get_blob_path(blob):
 path = os.path.dirname(__file__)
 
 def save_uploadedfile(uploaded_file):
-#      file_var = AudioSegment.from_mp3(uploaded_file) 
+    #  file_var = AudioSegment.from_mp3(uploaded_file) 
     
      storage.child(uploaded_file).put(uploaded_file)
-#      file_var.export(path+ "/uploads/" + uploaded_file)
+    #  file_var.export(path+ "/uploads/" + uploaded_file)
 
 
 
@@ -74,13 +74,13 @@ fileObject2 = st.file_uploader(label = "Please upload your sample audio file of 
 if fileObject and fileObject2 is not None:
     file1_details = {"FileName":fileObject.name,"FileType":fileObject.type}
     file2_details = {"FileName":fileObject2.name,"FileType":fileObject2.type}
-
+    save_uploadedfile(fileObject.name)
+    save_uploadedfile(fileObject2.name)
     
     if st.button('result'):
-        save_uploadedfile(fileObject.name)
-        save_uploadedfile(fileObject2.name)
+        
         verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-        score, prediction = verification.verify_files(bucket_name +'/'+ fileObject.name,bucket_name +'/'+ fileObject2.name)
+        score, prediction = verification.verify_files(bucket_name +'/'+ fileObject.name,bucket_name +'/' fileObject2.name)
         st.write(prediction)
         st.write(score)
             

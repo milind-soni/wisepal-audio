@@ -46,10 +46,10 @@ def get_blob_path(blob):
 path = os.path.dirname(__file__)
 
 def save_uploadedfile(uploaded_file):
-     file_var = AudioSegment.from_mp3(uploaded_file) 
+#      file_var = AudioSegment.from_mp3(uploaded_file) 
     
      storage.child(uploaded_file).put(uploaded_file)
-     file_var.export(path+ "/uploads/" + uploaded_file)
+#      file_var.export(path+ "/uploads/" + uploaded_file)
 
 
 

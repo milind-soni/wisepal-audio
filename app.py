@@ -60,7 +60,7 @@ import os
 
 
 def save_uploadedfile(uploaded_file):
-     file_var = AudioSegment.from_file(uploaded_file) 
+     file_var = AudioSegment.from_mp3(uploaded_file) 
 
      file_var.export("uploads/" + uploaded_file)
 
@@ -74,6 +74,13 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 
 
 
+
+@st.cache
+def load_audio(audio_file):
+    audio_file = open(audio_file, 'rb')
+    audio_bytes = audio_file.read()
+    return audio_file
+
 prediction = None 
 score = None 
 
@@ -82,17 +89,22 @@ fileObject = st.file_uploader(label = "Please upload your sample audio file of t
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
 
+
 if fileObject and fileObject2 is not None:
     file1_details = {"FileName":fileObject.name,"FileType":fileObject.type}
     file2_details = {"FileName":fileObject2.name,"FileType":fileObject2.type}
 
-    save_uploadedfile(fileObject.name)
-    save_uploadedfile(fileObject2.name)
-    verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-    score, prediction = verification.verify_files("uploads/" + fileObject.name,"uploads/" + fileObject2.name)
-    st.write(prediction)
-    st.write(score)
-        
+    
+    if st.button('save'):
+        save_uploadedfile(fileObject.name)
+        save_uploadedfile(fileObject2.name)
+    
+    if st.button('result'):
+        verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+        score, prediction = verification.verify_files("uploads/" + fileObject.name,"uploads/" + fileObject2.name)
+        st.write(prediction)
+        st.write(score)
+            
 #     storage.child(fileObject.name).put(fileObject.name)
 #     storage.child(fileObject2.name).put(fileObject2.name)
 

@@ -15,55 +15,40 @@ from pydub import AudioSegment
 import pyrebase
 import os
 
-# from google.cloud import storage
-# bucket_name = "fileupload-962b1.appspot.com"
+from google.cloud import storage
+bucket_name = "fileupload-962b1.appspot.com"
 
 
-# config = {
-# "apiKey": "AIzaSyDFyW8s4L8pabax_r9QajAkfxaJBLB00AE",
-# "authDomain": "fileupload-962b1.firebaseapp.com",
-# "databaseURL": "https://fileupload-962b1.firebaseio.com",
-# "projectId": "fileupload-962b1",
-# "storageBucket": "fileupload-962b1.appspot.com",
-# "serviceAccount": "fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
-# }
+config = {
+"apiKey": "AIzaSyDFyW8s4L8pabax_r9QajAkfxaJBLB00AE",
+"authDomain": "fileupload-962b1.firebaseapp.com",
+"databaseURL": "https://fileupload-962b1.firebaseio.com",
+"projectId": "fileupload-962b1",
+"storageBucket": "fileupload-962b1.appspot.com",
+"serviceAccount": "fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
+}
 
-# firebase_storage = pyrebase.initialize_app(config)
-# storage = firebase_storage.storage()
+firebase_storage = pyrebase.initialize_app(config)
+storage = firebase_storage.storage()
 
-# import os
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
-# '''
-# def list_blobs(bucket_name):
-#     """Lists all the blobs in the bucket."""
-    
-
-#     storage_client = storage.Client()
-    
-#     # Note: Client.list_blobs requires at least package version 1.17.0.
-#     blobs = storage_client.list_blobs(bucket_name)
-
-#     for blob in blobs:
-#         print(bucket_name+'/' + blob.name)
+import os
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
 
 
-# list_blobs(bucket_name)
-# '''
-
-# def get_blob_path(blob):
-#         """
-#         Gets blob path.
-#         :param blob: instance of :class:`google.cloud.storage.Blob`.
-#         :return: path string.
-#         """
-#         return bucket_name + "/" + blob.name 
+def get_blob_path(blob):
+        """
+        Gets blob path.
+        :param blob: instance of :class:`google.cloud.storage.Blob`.
+        :return: path string.
+        """
+        return bucket_name + "/" + blob.name 
 
 path = os.path.dirname(__file__)
 
 def save_uploadedfile(uploaded_file):
      file_var = AudioSegment.from_mp3(uploaded_file) 
     
-
+     storage.child(uploaded_file).put(uploaded_file)
      file_var.export(path+ "/uploads/" + uploaded_file)
 
 
@@ -84,11 +69,7 @@ fileObject = st.file_uploader(label = "Please upload your sample audio file of t
 
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
-import os
 
-cwd = os.getcwd()  # Get the current working directory (cwd)
-files = os.listdir(cwd)  # Get all the files in that directory
-st.write("Files in %r: %s" % (cwd, files))
 
 if fileObject and fileObject2 is not None:
     file1_details = {"FileName":fileObject.name,"FileType":fileObject.type}
@@ -99,7 +80,7 @@ if fileObject and fileObject2 is not None:
         save_uploadedfile(fileObject.name)
         save_uploadedfile(fileObject2.name)
         verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-        score, prediction = verification.verify_files(path+ "/uploads/" + fileObject.name,path+ "/uploads/" + fileObject2.name)
+        score, prediction = verification.verify_files(bucket_name +'/'+ fileObject.name,bucket_name +'/'+ fileObject2.name)
         st.write(prediction)
         st.write(score)
             

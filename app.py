@@ -97,6 +97,8 @@ if fileObject and fileObject2 is not None:
         save_uploadedfile(fileObject2.name)
         verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
         score, prediction = verification.verify_files("uploads/" + fileObject.name,"uploads/" + fileObject2.name)
+        asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+        transcription = asr_model.transcribe_file("uploads/" + fileObject2.name)
         st.write(prediction)
         st.write(score)
         

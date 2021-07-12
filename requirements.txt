@@ -1,4 +1,4 @@
-pandas==0.25.3
+pydub
 streamlit
 google-cloud-storage
 google-cloud-pubsub

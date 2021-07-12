@@ -80,7 +80,7 @@ if fileObject and fileObject2 is not None:
     if st.button('result'):
         
         verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-        score, prediction = verification.verify_files(bucket_name +'/'+ fileObject.name,bucket_name +'/' fileObject2.name)
+        score, prediction = verification.verify_files(bucket_name +'/'+ fileObject.name,bucket_name +'/'+ fileObject2.name)
         st.write(prediction)
         st.write(score)
             

@@ -84,7 +84,11 @@ fileObject = st.file_uploader(label = "Please upload your sample audio file of t
 
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
+import os
 
+cwd = os.getcwd()  # Get the current working directory (cwd)
+files = os.listdir(cwd)  # Get all the files in that directory
+st.write("Files in %r: %s" % (cwd, files))
 
 if fileObject and fileObject2 is not None:
     file1_details = {"FileName":fileObject.name,"FileType":fileObject.type}

@@ -10,28 +10,29 @@ from google.cloud import storage
 from speechbrain.pretrained import EncoderDecoderASR
 from google.cloud import storage
 from google.cloud import pubsub_v1
-
+from scipy.io import wavfile
+from pydub import AudioSegment
 import pyrebase
 import os
 
-from google.cloud import storage
-bucket_name = "fileupload-962b1.appspot.com"
+# from google.cloud import storage
+# bucket_name = "fileupload-962b1.appspot.com"
 
 
-config = {
-"apiKey": "AIzaSyDFyW8s4L8pabax_r9QajAkfxaJBLB00AE",
-"authDomain": "fileupload-962b1.firebaseapp.com",
-"databaseURL": "https://fileupload-962b1.firebaseio.com",
-"projectId": "fileupload-962b1",
-"storageBucket": "fileupload-962b1.appspot.com",
-"serviceAccount": "fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
-}
+# config = {
+# "apiKey": "AIzaSyDFyW8s4L8pabax_r9QajAkfxaJBLB00AE",
+# "authDomain": "fileupload-962b1.firebaseapp.com",
+# "databaseURL": "https://fileupload-962b1.firebaseio.com",
+# "projectId": "fileupload-962b1",
+# "storageBucket": "fileupload-962b1.appspot.com",
+# "serviceAccount": "fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
+# }
 
-firebase_storage = pyrebase.initialize_app(config)
-storage = firebase_storage.storage()
+# firebase_storage = pyrebase.initialize_app(config)
+# storage = firebase_storage.storage()
 
-import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
+# import os
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="fileupload-962b1-firebase-adminsdk-tnjsb-72bf80e9c9.json"
 # '''
 # def list_blobs(bucket_name):
 #     """Lists all the blobs in the bucket."""
@@ -49,13 +50,20 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="fileupload-962b1-firebase-adminsdk
 # list_blobs(bucket_name)
 # '''
 
-def get_blob_path(blob):
-        """
-        Gets blob path.
-        :param blob: instance of :class:`google.cloud.storage.Blob`.
-        :return: path string.
-        """
-        return bucket_name + "/" + blob.name 
+# def get_blob_path(blob):
+#         """
+#         Gets blob path.
+#         :param blob: instance of :class:`google.cloud.storage.Blob`.
+#         :return: path string.
+#         """
+#         return bucket_name + "/" + blob.name 
+
+
+def save_uploadedfile(uploaded_file):
+     file_var = AudioSegment.from_mp3(uploaded_file) 
+
+     file_var.export("uploads/" + uploaded_file)
+
 
 
 
@@ -78,18 +86,20 @@ score = None
 
 fileObject = st.file_uploader(label = "Please upload your sample audio file of the interviewee" )
 
-
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
 
-
-
 if fileObject and fileObject2 is not None:
-    verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-    score, prediction = verification.verify_files(fileObject.name,fileObject2.name)
-    st.write(prediction)
-    st.write(score)
-    
+    file1_details = {"FileName":fileObject.name,"FileType":fileObject.type}
+    file2_details = {"FileName":fileObject2.name,"FileType":fileObject2.type}
+    if st.button('result'):
+        save_uploadedfile(fileObject.name)
+        save_uploadedfile(fileObject2.name)
+        verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+        score, prediction = verification.verify_files("uploads/" + fileObject.name,"uploads/" + fileObject2.name)
+        st.write(prediction)
+        st.write(score)
+        
 #     storage.child(fileObject.name).put(fileObject.name)
 #     storage.child(fileObject2.name).put(fileObject2.name)
 

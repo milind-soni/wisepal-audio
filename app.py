@@ -66,16 +66,16 @@ prediction = None
 score = None 
 
 fileObject = st.file_uploader(label = "Please upload your sample audio file of the interviewee" )
-
+storage.child(fileObject.name).put(fileObject.name)
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
-
+storage.child(fileObject2.name).put(fileObject2.name)
 
 
 if fileObject and fileObject2 is not None:
 #     file1_details = {"FileName":fileObject.name,"FileType":fileObject.type}
 #     file2_details = {"FileName":fileObject2.name,"FileType":fileObject2.type}
-    storage.child(fileObject.name).put(fileObject.name)
-    storage.child(fileObject2.name).put(fileObject2.name)
+    
+    
     
     if st.button('result'):
         

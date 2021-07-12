@@ -60,7 +60,7 @@ import os
 
 
 def save_uploadedfile(uploaded_file):
-     file_var = AudioSegment.from_mp3(uploaded_file) 
+     file_var = AudioSegment.from_file(uploaded_file) 
 
      file_var.export("uploads/" + uploaded_file)
 
@@ -73,13 +73,6 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 
 
 
-
-
-@st.cache
-def load_audio(audio_file):
-    audio_file = open(audio_file, 'rb')
-    audio_bytes = audio_file.read()
-    return audio_file
 
 prediction = None 
 score = None 

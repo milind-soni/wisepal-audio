@@ -92,15 +92,13 @@ fileObject2 = st.file_uploader(label = "Please upload your sample audio file of 
 if fileObject and fileObject2 is not None:
     file1_details = {"FileName":fileObject.name,"FileType":fileObject.type}
     file2_details = {"FileName":fileObject2.name,"FileType":fileObject2.type}
-    if st.button('result'):
-        save_uploadedfile(fileObject.name)
-        save_uploadedfile(fileObject2.name)
-        verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
-        score, prediction = verification.verify_files("uploads/" + fileObject.name,"uploads/" + fileObject2.name)
-        asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
-        transcription = asr_model.transcribe_file("uploads/" + fileObject2.name)
-        st.write(prediction)
-        st.write(score)
+
+    save_uploadedfile(fileObject.name)
+    save_uploadedfile(fileObject2.name)
+    verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+    score, prediction = verification.verify_files("uploads/" + fileObject.name,"uploads/" + fileObject2.name)
+    st.write(prediction)
+    st.write(score)
         
 #     storage.child(fileObject.name).put(fileObject.name)
 #     storage.child(fileObject2.name).put(fileObject2.name)

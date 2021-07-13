@@ -74,6 +74,14 @@ st.header("Audio Verification app")
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
 
+def savefiletolocal(uploaded_file,some_bytes):
+    binary_file = open(path+ "/uploads/" + uploaded_file, "wb")
+  
+    # Write bytes to file
+    binary_file.write(some_bytes)
+  
+    # Close file
+    binary_file.close()
 
 
 
@@ -91,15 +99,17 @@ if fileObject and fileObject2 is not None:
     file2_details = {"FileName":fileObject2.name,"FileType":fileObject2.type}
     st.audio(fileObject, format='audio/ogg')
     st.audio(fileObject2, format='audio/ogg')
-    
+    bytes_data = fileObject.getvalue()
+    bytes_data2 = fileObject2.getvalue()
+    #st.write(bytes_data)
     if st.button('result'):
-        save_uploadedfile(fileObject.name)
-        save_uploadedfile(fileObject2.name)
+        savefiletolocal(fileObject.name,bytes_data)
+        savefiletolocal(fileObject2.name,bytes_data2)
         verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
         score, prediction = verification.verify_files(path+ "/uploads/" + fileObject.name,path+ "/uploads/" + fileObject2.name)
                
         asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
-        transcription = asr_model.transcribe_file(get_blob_path(fileObject2))
+        transcription = asr_model.transcribe_file(path+ "/uploads/" + fileObject2.name)
     
     
         st.write(prediction)
@@ -108,6 +118,4 @@ if fileObject and fileObject2 is not None:
 #     storage.child(fileObject.name).put(fileObject.name)
 #     storage.child(fileObject2.name).put(fileObject2.name)
 
-    
- 
-    
+  

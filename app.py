@@ -84,31 +84,30 @@ fileObject = st.file_uploader(label = "Please upload your sample audio file of t
 
 fileObject2 = st.file_uploader(label = "Please upload your sample audio file of the interviewee" ,key = "2" )
 
-import os
 
-cwd = os.getcwd()  # Get the current working directory (cwd)
-files = os.listdir(cwd)  # Get all the files in that directory
-st.write("Files in %r: %s" % (cwd, files))
 
 if fileObject and fileObject2 is not None:
     file1_details = {"FileName":fileObject.name,"FileType":fileObject.type}
     file2_details = {"FileName":fileObject2.name,"FileType":fileObject2.type}
-
+    st.audio(fileObject, format='audio/ogg')
+    st.audio(fileObject2, format='audio/ogg')
     
     if st.button('result'):
         save_uploadedfile(fileObject.name)
         save_uploadedfile(fileObject2.name)
         verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
         score, prediction = verification.verify_files(path+ "/uploads/" + fileObject.name,path+ "/uploads/" + fileObject2.name)
+               
+        asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+        transcription = asr_model.transcribe_file(get_blob_path(fileObject2))
+    
+    
         st.write(prediction)
         st.write(score)
-            
+        st.write(transcription)    
 #     storage.child(fileObject.name).put(fileObject.name)
 #     storage.child(fileObject2.name).put(fileObject2.name)
 
     
-        
-#     asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
-#     transcription = asr_model.transcribe_file(get_blob_path(fileObject2))
-    
+ 
     

@@ -1,7 +1,5 @@
 pydub
 streamlit
-google-cloud-storage
-google-cloud-pubsub
 jwt
 pyrebase
 numpy==1.18.1

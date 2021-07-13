@@ -6,10 +6,7 @@ import time
 from speechbrain.pretrained import SpeakerRecognition
 import os
 import wave
-from google.cloud import storage
 from speechbrain.pretrained import EncoderDecoderASR
-from google.cloud import storage
-from google.cloud import pubsub_v1
 from scipy.io import wavfile
 from pydub import AudioSegment
 import pyrebase

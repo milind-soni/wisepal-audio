@@ -9,7 +9,6 @@ import wave
 from speechbrain.pretrained import EncoderDecoderASR
 from scipy.io import wavfile
 from pydub import AudioSegment
-import pyrebase
 import os
 
 # from google.cloud import storage

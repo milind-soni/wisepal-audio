@@ -1,7 +1,6 @@
 pydub
 streamlit
 jwt
-pyrebase
 numpy==1.17.3
 speechbrain
 
